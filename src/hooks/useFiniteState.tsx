@@ -1,38 +1,59 @@
 import { useEffect, useState } from "react";
-import { createMachine, interpret } from "xstate";
+import { assign, createMachine, interpret } from "xstate";
 import { useMachine } from "@xstate/react";
 
-const smilesMachine = createMachine({
-  id: "smilesState",
-  initial: "idle",
-  predictableActionArguments: true,
-  schema: {
-    events: {} as
-      | { type: "RESOLVED" }
-      | { type: "REJECTED" }
-      | { type: "PENDING" }
-      | { type: "RETRY" },
+interface Context {
+  name: string;
+}
+
+const smilesMachine = createMachine(
+  {
+    id: "smilesState",
+    initial: "idle",
+    predictableActionArguments: true,
+    schema: {
+      context: {} as Context,
+      events: {} as
+        | { type: "RESOLVED" }
+        | { type: "REJECTED" }
+        | { type: "PENDING" }
+        | { type: "RETRY" },
+    },
+    context: {
+      name: "",
+    },
+    states: {
+      idle: {
+        on: {
+          PENDING: {
+            actions: "assignName",
+            target: "pending",
+          },
+        },
+      },
+      pending: {
+        on: {
+          RESOLVED: { target: "success" },
+          REJECTED: { target: "failure" },
+        },
+      },
+      success: { type: "final" },
+      failure: {
+        on: {
+          RETRY: { target: "pending" },
+        },
+      },
+    },
   },
-  states: {
-    idle: {
-      on: {
-        PENDING: { target: "pending" },
-      },
+  {
+    actions: {
+      assignName: () =>
+        assign({
+          name: (context, event: Context) => event.name,
+        }),
     },
-    pending: {
-      on: {
-        RESOLVED: { target: "success" },
-        REJECTED: { target: "failure" },
-      },
-    },
-    success: { type: "final" },
-    failure: {
-      on: {
-        RETRY: { target: "pending" },
-      },
-    },
-  },
-});
+  }
+);
 
 export enum States {
   PENDING = "pending",
