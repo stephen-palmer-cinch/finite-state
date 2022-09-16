@@ -1,18 +1,30 @@
 import { useEffect, useState } from "react";
-import { assign, createMachine, interpret } from "xstate";
+import {
+  AnyEventObject,
+  assign,
+  createMachine,
+  EventObject,
+  interpret,
+  PartialAssigner,
+} from "xstate";
 import { useMachine } from "@xstate/react";
 
 type Move = {
   name: string;
   damage: number;
 };
+
 type Pokemon = {
   name: string;
   totalHp: number;
   currentHp: number;
   moves: Move[];
 };
-interface Context {
+
+interface SelectedMove extends AnyEventObject {
+  move?: Move;
+}
+interface PokemonContext {
   selected_pokemon: Pokemon;
   available_pokemon: Pokemon[];
   enemy_pokemon: Pokemon;
@@ -54,7 +66,7 @@ const pokemonBattleMachine = createMachine(
     initial: "idle",
     predictableActionArguments: true,
     schema: {
-      context: {} as Context,
+      context: {} as PokemonContext,
       events: {} as
         | { type: "WALK" }
         | { type: "ENCOUNTER" }
@@ -107,20 +119,30 @@ const pokemonBattleMachine = createMachine(
       },
       their_turn: {
         on: {
-          ENEMY_ATTACK: { target: "player_damage_step" },
+          ENEMY_ATTACK: {
+            target: "player_damage_step",
+            actions: "playerDamage",
+          },
         },
       },
       moves: {
         on: {
-          MOVE_SELECTED: { target: "enemy_damage_step" },
+          MOVE_SELECTED: {
+            target: "enemy_damage_step",
+            actions: "enemyDamage",
+          },
+          CANCEL: { target: "your_turn" },
         },
       },
       items: {
-        on: { POKE_BALL: { target: "catching" } },
+        on: {
+          POKE_BALL: { target: "catching" },
+          CANCEL: { target: "your_turn" },
+        },
       },
       pokemon: {
         on: {
-          POKEMON_SELECTED: { target: "their_turn" },
+          POKEMON_SELECTED: { target: "their_turn", actions: "switchPokemon" },
           CANCEL: { target: "your_turn" },
         },
       },
@@ -175,30 +197,47 @@ const pokemonBattleMachine = createMachine(
       victory: { type: "final" },
       whited_out: { type: "final" },
     },
+  },
+  {
+    actions: {
+      switchPokemon: () =>
+        assign({
+          selected_pokemon: (context, event: Pokemon) => event,
+        }),
+      playerDamage: () =>
+        assign({
+          selected_pokemon: (
+            context: Pick<PokemonContext, "selected_pokemon">,
+            event: SelectedMove
+          ) => {
+            const damage = event.move?.damage || 0;
+            return {
+              ...context.selected_pokemon,
+              currentHp: context.selected_pokemon.currentHp - damage,
+            };
+          },
+        }),
+      enemyDamage: () =>
+        assign({
+          enemy_pokemon: (context, event: Pokemon) => event,
+        }),
+    },
   }
-  // {
-  //   actions: {
-  //     assignName: () =>
-  //       assign({
-  //         name: (context, event: Context) => event.name,
-  //       }),
-  //   },
-  // }
 );
 
-export enum States {
-  PENDING = "pending",
-  SUCCESS = "success",
-  FAILURE = "failure",
-}
+// export enum States {
+//   PENDING = "pending",
+//   SUCCESS = "success",
+//   FAILURE = "failure",
+// }
 
 // const smilesService = interpret(smilesMachine);
 
-export interface SmilesData {
-  data: {
-    smiles: number;
-  };
-}
+// export interface SmilesData {
+//   data: {
+//     smiles: number;
+//   };
+// }
 
 // export const useFiniteState = (): [state: any, smiles: number] => {
 //   const [state, send] = useMachine(smilesMachine);
