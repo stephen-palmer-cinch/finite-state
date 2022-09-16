@@ -83,10 +83,8 @@ const pokemonBattleMachine = createMachine(
         | { type: "POKE_BALL" }
         | { type: "ENEMY_ATTACK" }
         | { type: "DAMAGE_TAKEN" }
-        | { type: "KO" }
         | { type: "SUCCESS" }
-        | { type: "FAILURE" }
-        | { type: "NO_MORE_POKEMON" },
+        | { type: "FAILURE" },
     },
     context: {
       selected_pokemon: pikachu,
