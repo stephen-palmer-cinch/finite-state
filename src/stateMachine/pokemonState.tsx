@@ -1,13 +1,4 @@
-import { useEffect, useState } from "react";
-import {
-  AnyEventObject,
-  assign,
-  createMachine,
-  EventObject,
-  interpret,
-  PartialAssigner,
-} from "xstate";
-import { useMachine } from "@xstate/react";
+import { AnyEventObject, assign, createMachine } from "xstate";
 
 type Move = {
   name: string;
@@ -24,11 +15,69 @@ type Pokemon = {
 interface SelectedMove extends AnyEventObject {
   move?: Move;
 }
-interface PokemonContext {
+
+export interface PokemonContext {
   selected_pokemon: Pokemon;
   available_pokemon: Pokemon[];
   enemy_pokemon: Pokemon;
 }
+
+export enum Events {
+  walk = "WALK",
+  encounter = "ENCOUNTER",
+  your_turn = "YOUR_TURN",
+  their_turn = "THEIR_TURN",
+  pokemon = "POKEMON",
+  select_next_pokemon = "SELECT_NEXT_POKEMON",
+  pokemon_selected = "POKEMON_SELECTED",
+  cancel = "CANCEL",
+  items = "ITEMS",
+  moves = "MOVES",
+  move_selected = "MOVE_SELECTED",
+  run = "RUN",
+  poke_ball = "POKE_BALL",
+  enemy_attack = "ENEMY_ATTACK",
+  damage_taken = "DAMAGE_TAKEN",
+  success = "SUCCESS",
+  failure = "FAILURE",
+}
+
+export enum State {
+  idle = "idle",
+  walking = "walking",
+  battle = "battle",
+  your_turn = "your_turn",
+  their_turn = "their_turn",
+  moves = "moves",
+  items = "items",
+  pokemon = "pokemon",
+  run = "run",
+  catching = "catching",
+  enemy_damage_step = "enemy_damage_step",
+  player_damage_step = "player_damage_step",
+  feint = "feint",
+  victory = "victory",
+  whited_out = "whited_out",
+}
+
+const gameEvents = {} as
+  | { type: Events.walk }
+  | { type: Events.encounter }
+  | { type: Events.your_turn }
+  | { type: Events.their_turn }
+  | { type: Events.pokemon }
+  | { type: Events.select_next_pokemon }
+  | { type: Events.pokemon_selected }
+  | { type: Events.cancel }
+  | { type: Events.items }
+  | { type: Events.moves }
+  | { type: Events.move_selected }
+  | { type: Events.run }
+  | { type: Events.poke_ball }
+  | { type: Events.enemy_attack }
+  | { type: Events.damage_taken }
+  | { type: Events.success }
+  | { type: Events.failure };
 
 const pikachu: Pokemon = {
   name: "Pikachu",
@@ -60,31 +109,14 @@ const pidgey: Pokemon = {
   ],
 };
 
-const pokemonBattleMachine = createMachine(
+export const pokemonBattleMachine = createMachine(
   {
     id: "smilesState",
     initial: "idle",
     predictableActionArguments: true,
     schema: {
       context: {} as PokemonContext,
-      events: {} as
-        | { type: "WALK" }
-        | { type: "ENCOUNTER" }
-        | { type: "YOUR_TURN" }
-        | { type: "THEIR_TURN" }
-        | { type: "POKEMON" }
-        | { type: "SELECT_NEXT_POKEMON" }
-        | { type: "POKEMON_SELECTED" }
-        | { type: "CANCEL" }
-        | { type: "ITEMS" }
-        | { type: "MOVES" }
-        | { type: "MOVE_SELECTED" }
-        | { type: "RUN" }
-        | { type: "POKE_BALL" }
-        | { type: "ENEMY_ATTACK" }
-        | { type: "DAMAGE_TAKEN" }
-        | { type: "SUCCESS" }
-        | { type: "FAILURE" },
+      events: gameEvents,
     },
     context: {
       selected_pokemon: pikachu,
@@ -200,7 +232,8 @@ const pokemonBattleMachine = createMachine(
     actions: {
       switchPokemon: () =>
         assign({
-          selected_pokemon: (context, event: Pokemon) => event,
+          selected_pokemon: (context, event: { pokemon: Pokemon }) =>
+            event.pokemon,
         }),
       playerDamage: () =>
         assign({
@@ -222,47 +255,3 @@ const pokemonBattleMachine = createMachine(
     },
   }
 );
-
-// export enum States {
-//   PENDING = "pending",
-//   SUCCESS = "success",
-//   FAILURE = "failure",
-// }
-
-// const smilesService = interpret(smilesMachine);
-
-// export interface SmilesData {
-//   data: {
-//     smiles: number;
-//   };
-// }
-
-// export const useFiniteState = (): [state: any, smiles: number] => {
-//   const [state, send] = useMachine(smilesMachine);
-//   const [smiles, setSmiles] = useState(0);
-
-//   smilesService.start();
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       send("PENDING");
-//       try {
-//         const result: () => Promise<SmilesData> = () =>
-//           new Promise((res) =>
-//             setTimeout(() => res({ data: { smiles: 1 } }), 3000)
-//           );
-//         const {
-//           data: { smiles: smileCount },
-//         } = await result();
-
-//         setSmiles(smileCount);
-//         send("RESOLVED");
-//       } catch (error) {
-//         send("REJECTED");
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
-//   return [state, smiles];
-// };
