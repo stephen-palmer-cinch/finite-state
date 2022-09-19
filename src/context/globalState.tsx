@@ -1,23 +1,20 @@
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import { pokemonBattleMachine } from "../stateMachine/pokemonState";
-import { useMachine } from "@xstate/react";
-import { interpret } from "xstate";
+import { useInterpret } from "@xstate/react";
+import { InterpreterFrom } from "xstate";
 
-export const GlobalStateContext = createContext({} as any);
+export const GlobalStateContext = createContext({
+  pokemonMachine: {} as InterpreterFrom<typeof pokemonBattleMachine>,
+});
 
 interface Props {
   children: JSX.Element;
 }
 export const GlobalStateProvider = ({ children }: Props) => {
-  useEffect(() => {
-    const startMachine = () => interpret(pokemonBattleMachine).start();
-    startMachine();
-  }, []);
-
-  const [state, send] = useMachine(pokemonBattleMachine);
+  const pokemonMachine = useInterpret(pokemonBattleMachine);
 
   return (
-    <GlobalStateContext.Provider value={{ state, send }}>
+    <GlobalStateContext.Provider value={{ pokemonMachine }}>
       {children}
     </GlobalStateContext.Provider>
   );
