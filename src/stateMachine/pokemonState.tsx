@@ -1,13 +1,19 @@
 import { assign, createMachine } from "xstate";
 import {
   PokemonContext,
-  gameEvents,
+  GameEvents,
   pidgey,
   pikachu,
   charmander,
   Pokemon,
   SelectedMove,
 } from "./types";
+
+const initialContext = {
+  selected_pokemon: pikachu,
+  available_pokemon: [charmander],
+  enemy_pokemon: pidgey,
+};
 
 export const pokemonBattleMachine = createMachine(
   {
@@ -16,13 +22,9 @@ export const pokemonBattleMachine = createMachine(
     predictableActionArguments: true,
     schema: {
       context: {} as PokemonContext,
-      events: gameEvents,
+      events: {} as GameEvents,
     },
-    context: {
-      selected_pokemon: pikachu,
-      available_pokemon: [charmander],
-      enemy_pokemon: pidgey,
-    },
+    context: initialContext,
     states: {
       idle: {
         on: {
@@ -132,7 +134,15 @@ export const pokemonBattleMachine = createMachine(
     actions: {
       //this one works
       switchPokemon: assign((context, event: any) => {
-        return { selected_pokemon: context.available_pokemon[0] };
+        const currentPokemon: Pokemon = context.selected_pokemon;
+        const selectedPokemon = context.available_pokemon[event.payload];
+        const benchPokemon = context.available_pokemon.filter(
+          (pokemon) => pokemon !== selectedPokemon
+        );
+        return {
+          available_pokemon: [...benchPokemon, currentPokemon],
+          selected_pokemon: selectedPokemon,
+        };
       }),
       playerDamage: () =>
         assign({

@@ -22,6 +22,10 @@ export interface PokemonContext {
   enemy_pokemon: Pokemon;
 }
 
+export interface SelectedPokemon extends AnyEventObject {
+  pokemon: number;
+}
+
 export enum Events {
   walk = "WALK",
   encounter = "ENCOUNTER",
@@ -60,22 +64,41 @@ export enum State {
   whited_out = "whited_out",
 }
 
-export const gameEvents = {} as
+export interface SelectedPokemonEvent {
+  type: Events.pokemon_selected;
+  payload: number;
+}
+
+export interface MoveSelectedEvent {
+  type: Events.move_selected;
+  payload: Move;
+}
+
+export interface EnemyAttackEvent {
+  type: Events.enemy_attack;
+  payload: Move;
+}
+export interface DamageTakenEvent {
+  type: Events.damage_taken;
+  payload: number;
+}
+
+export type GameEvents =
   | { type: Events.walk }
   | { type: Events.encounter }
   | { type: Events.your_turn }
   | { type: Events.their_turn }
   | { type: Events.pokemon }
   | { type: Events.select_next_pokemon }
-  | { type: Events.pokemon_selected; payload: any }
+  | SelectedPokemonEvent
   | { type: Events.cancel }
   | { type: Events.items }
   | { type: Events.moves }
-  | { type: Events.move_selected }
+  | MoveSelectedEvent
   | { type: Events.run }
   | { type: Events.poke_ball }
-  | { type: Events.enemy_attack }
-  | { type: Events.damage_taken }
+  | EnemyAttackEvent
+  | DamageTakenEvent
   | { type: Events.success }
   | { type: Events.failure };
 

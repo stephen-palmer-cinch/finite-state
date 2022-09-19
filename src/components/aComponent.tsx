@@ -1,7 +1,7 @@
 import { useActor } from "@xstate/react";
 import { useContext, useEffect } from "react";
 import { GlobalStateContext } from "../context/globalState";
-import { charmander, Events } from "../stateMachine/types";
+import { Events } from "../stateMachine/types";
 
 export const SomeComponent = () => {
   const globalServices = useContext(GlobalStateContext);
@@ -11,6 +11,7 @@ export const SomeComponent = () => {
   useEffect(() => {
     console.log(state);
   }, [state]);
+
   return (
     <div>
       <button onClick={() => send(Events.walk)}>Walk</button>
@@ -18,12 +19,20 @@ export const SomeComponent = () => {
       <button onClick={() => send(Events.your_turn)}>Your turn</button>
       <button onClick={() => send(Events.pokemon)}>Pokemon</button>
       <button
-        onClick={() =>
-          send({ type: Events.pokemon_selected, payload: charmander })
-        }
+        onClick={() => send({ type: Events.pokemon_selected, payload: 0 })}
       >
         Pokemon Selected
       </button>
+      <button onClick={() => send(Events.moves)}>Moves</button>
+      <button onClick={() => send(Events.items)}>Items</button>
+      <button onClick={() => send(Events.run)}>Run</button>
+      <button onClick={() => send(Events.items)}>Items</button>
+      <button onClick={() => send(Events.poke_ball)}>Pokeball</button>
+      <button onClick={() => send(Events.success)}>Success</button>
+      <button onClick={() => send(Events.failure)}>Failure</button>
+      <button onClick={() => send(Events.cancel)}>Cancel</button>
+      <button onClick={() => send(Events.enemy_attack)}>Enemy attack</button>
+      <button onClick={() => send(Events.damage_taken)}>Damage taken</button>
     </div>
   );
 };
