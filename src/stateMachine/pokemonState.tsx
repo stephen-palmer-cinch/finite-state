@@ -6,7 +6,6 @@ import {
   pikachu,
   charmander,
   Pokemon,
-  SelectedMove,
 } from "./types";
 
 const initialContext = {
@@ -75,7 +74,12 @@ export const pokemonBattleMachine = createMachine(
       pokemon: {
         on: {
           POKEMON_SELECTED: { actions: "switchPokemon", target: "their_turn" },
-          CANCEL: { target: "your_turn" },
+          CANCEL: [
+            {
+              cond: (context) => context.selected_pokemon.currentHp > 0,
+              target: "your_turn",
+            },
+          ],
         },
       },
       run: {
@@ -132,7 +136,6 @@ export const pokemonBattleMachine = createMachine(
   },
   {
     actions: {
-      //this one works
       switchPokemon: assign((context, event: any) => {
         const currentPokemon: Pokemon = context.selected_pokemon;
         const selectedPokemon = context.available_pokemon[event.payload];
@@ -144,23 +147,22 @@ export const pokemonBattleMachine = createMachine(
           selected_pokemon: selectedPokemon,
         };
       }),
-      playerDamage: () =>
-        assign({
-          selected_pokemon: (
-            context: Pick<PokemonContext, "selected_pokemon">,
-            event: SelectedMove
-          ) => {
-            const damage = event.move?.damage || 0;
-            return {
-              ...context.selected_pokemon,
-              currentHp: context.selected_pokemon.currentHp - damage,
-            };
-          },
-        }),
-      enemyDamage: () =>
-        assign({
-          enemy_pokemon: (context, event: Pokemon) => event,
-        }),
+      playerDamage: assign((context, event: any) => {
+        const currentPokemon: Pokemon = context.selected_pokemon;
+        const selectedMove = currentPokemon.moves[event.payload];
+        const currentPokemonHp = currentPokemon.currentHp - selectedMove.damage;
+        return {
+          selected_pokemon: { ...currentPokemon, currentHp: currentPokemonHp },
+        };
+      }),
+      enemyDamage: assign((context, event: any) => {
+        const enemyPokemon: Pokemon = context.enemy_pokemon;
+        const selectedMove = enemyPokemon.moves[event.payload];
+        const enemyPokemonHp = enemyPokemon.currentHp - selectedMove.damage;
+        return {
+          enemy_pokemon: { ...enemyPokemon, currentHp: enemyPokemonHp },
+        };
+      }),
     },
   }
 );

@@ -1,5 +1,3 @@
-import { AnyEventObject } from "xstate";
-
 export type Move = {
   name: string;
   damage: number;
@@ -12,18 +10,10 @@ export type Pokemon = {
   moves: Move[];
 };
 
-export interface SelectedMove extends AnyEventObject {
-  move?: Move;
-}
-
 export interface PokemonContext {
   selected_pokemon: Pokemon;
   available_pokemon: Pokemon[];
   enemy_pokemon: Pokemon;
-}
-
-export interface SelectedPokemon extends AnyEventObject {
-  pokemon: number;
 }
 
 export enum Events {
@@ -71,15 +61,11 @@ export interface SelectedPokemonEvent {
 
 export interface MoveSelectedEvent {
   type: Events.move_selected;
-  payload: Move;
+  payload: number;
 }
 
 export interface EnemyAttackEvent {
   type: Events.enemy_attack;
-  payload: Move;
-}
-export interface DamageTakenEvent {
-  type: Events.damage_taken;
   payload: number;
 }
 
@@ -98,7 +84,7 @@ export type GameEvents =
   | { type: Events.run }
   | { type: Events.poke_ball }
   | EnemyAttackEvent
-  | DamageTakenEvent
+  | { type: Events.damage_taken }
   | { type: Events.success }
   | { type: Events.failure };
 
