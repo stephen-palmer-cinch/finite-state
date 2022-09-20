@@ -14,8 +14,6 @@ export const SomeComponent = () => {
 
   return (
     <div>
-      <button onClick={() => send(Events.walk)}>Walk</button>
-      <button onClick={() => send(Events.encounter)}>Encounter</button>
       <button onClick={() => send(Events.your_turn)}>Your turn</button>
       <button onClick={() => send(Events.pokemon)}>Pokemon</button>
       <button onClick={() => send(Events.select_next_pokemon)}>

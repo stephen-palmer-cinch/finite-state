@@ -16,8 +16,8 @@ const initialContext = {
 
 export const pokemonBattleMachine = createMachine(
   {
-    id: "smilesState",
-    initial: "idle",
+    id: "pokemonState",
+    initial: "battle",
     predictableActionArguments: true,
     schema: {
       context: {} as PokemonContext,
@@ -25,16 +25,6 @@ export const pokemonBattleMachine = createMachine(
     },
     context: initialContext,
     states: {
-      idle: {
-        on: {
-          WALK: { target: "walking" },
-        },
-      },
-      walking: {
-        on: {
-          ENCOUNTER: { target: "battle" },
-        },
-      },
       battle: {
         after: {
           1000: { target: "your_turn" },
@@ -83,7 +73,10 @@ export const pokemonBattleMachine = createMachine(
         },
       },
       run: {
-        on: { SUCCESS: { target: "idle" }, FAILURE: { target: "their_turn" } },
+        on: {
+          SUCCESS: { target: "victory" },
+          FAILURE: { target: "their_turn" },
+        },
       },
       catching: {
         on: {

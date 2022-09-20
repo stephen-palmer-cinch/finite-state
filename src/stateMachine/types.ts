@@ -17,8 +17,6 @@ export interface PokemonContext {
 }
 
 export enum Events {
-  walk = "WALK",
-  encounter = "ENCOUNTER",
   your_turn = "YOUR_TURN",
   their_turn = "THEIR_TURN",
   pokemon = "POKEMON",
@@ -37,9 +35,6 @@ export enum Events {
 }
 
 export enum State {
-  idle = "idle",
-  walking = "walking",
-  battle = "battle",
   your_turn = "your_turn",
   their_turn = "their_turn",
   moves = "moves",
@@ -70,8 +65,6 @@ export interface EnemyAttackEvent {
 }
 
 export type GameEvents =
-  | { type: Events.walk }
-  | { type: Events.encounter }
   | { type: Events.your_turn }
   | { type: Events.their_turn }
   | { type: Events.pokemon }
