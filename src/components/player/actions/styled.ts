@@ -6,7 +6,6 @@ export const ActionsContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: space-between;
-  background-color: red;
 `;
 
 export const ActionsRow = styled.div`

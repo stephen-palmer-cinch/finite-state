@@ -8,8 +8,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <GlobalStateProvider>
-          {/* <SomeComponent /> */}
-          <StageComponent />
+          <div>
+            <SomeComponent />
+            <StageComponent />
+          </div>
         </GlobalStateProvider>
       </header>
     </div>

@@ -13,6 +13,7 @@ export type Pokemon = {
   currentHp: number;
   moves: Move[];
   sprite: string;
+  level: number;
 };
 
 export interface PokemonContext {
@@ -98,6 +99,7 @@ export const pikachu: Pokemon = {
     { name: "growl", damage: 0 },
   ],
   sprite: pikachuSprite,
+  level: 5,
 };
 
 export const charmander: Pokemon = {
@@ -109,6 +111,7 @@ export const charmander: Pokemon = {
     { name: "ember", damage: 50 },
   ],
   sprite: charmanderSprite,
+  level: 5,
 };
 
 export const pidgey: Pokemon = {
@@ -120,4 +123,5 @@ export const pidgey: Pokemon = {
     { name: "gust", damage: 40 },
   ],
   sprite: pidgeySprite,
+  level: 4,
 };

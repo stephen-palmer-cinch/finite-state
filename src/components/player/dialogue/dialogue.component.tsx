@@ -1,5 +1,12 @@
 import { DialogueContainer } from "./styled";
 
-export const DialogueComponent = () => {
-  return <DialogueContainer>Dialogue</DialogueContainer>;
+type DialogueComponentProps = {
+  dialogue: string;
+};
+export const DialogueComponent = ({ dialogue }: DialogueComponentProps) => {
+  return (
+    <DialogueContainer>
+      <div>{dialogue}</div>
+    </DialogueContainer>
+  );
 };

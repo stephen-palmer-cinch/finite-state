@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 export const SpriteContainer = styled.div`
   display: flex;
+  justify-content: center;
   width: 100%;
   height: 50%;
-  background-color: orange;
 `;
 
 export const SpriteImage = styled.img`

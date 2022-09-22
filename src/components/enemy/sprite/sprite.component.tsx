@@ -1,5 +1,13 @@
-import { SpriteContainer } from "./styled";
+import { SpriteContainer, SpriteImage } from "./styled";
 
-export const SpriteComponent = () => {
-  return <SpriteContainer>Sprite</SpriteContainer>;
+type SpriteComponentProps = {
+  sprite: string;
+  name: string;
+};
+export const SpriteComponent = ({ sprite, name }: SpriteComponentProps) => {
+  return (
+    <SpriteContainer>
+      <SpriteImage src={sprite} alt={name} />
+    </SpriteContainer>
+  );
 };

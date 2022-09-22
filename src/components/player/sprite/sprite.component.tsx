@@ -1,9 +1,13 @@
 import { SpriteContainer, SpriteImage } from "./styled";
-import { charmander } from "../../../stateMachine/types";
-export const SpriteComponent = () => {
+
+type SpriteComponentProps = {
+  sprite: string;
+  name: string;
+};
+export const SpriteComponent = ({ sprite, name }: SpriteComponentProps) => {
   return (
     <SpriteContainer>
-      <SpriteImage src={charmander.sprite} alt={charmander.name} />
+      <SpriteImage src={sprite} alt={name} />
     </SpriteContainer>
   );
 };

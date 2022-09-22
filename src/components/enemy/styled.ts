@@ -4,5 +4,4 @@ export const Enemy = styled.div`
   display: flex;
   width: 100%;
   height: 40%;
-  background-color: blue;
 `;
