@@ -6,3 +6,8 @@ export const SpriteContainer = styled.div`
   height: 50%;
   background-color: orange;
 `;
+
+export const SpriteImage = styled.img`
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+`;

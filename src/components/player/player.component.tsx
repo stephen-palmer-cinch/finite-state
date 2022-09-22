@@ -9,11 +9,11 @@ export const PlayerComponent = () => {
     <Player>
       <PlayerContainer>
         <SpriteComponent />
-        <ActionsComponent />
+        <DialogueComponent />
       </PlayerContainer>
       <PlayerContainer>
         <NameComponent />
-        <DialogueComponent />
+        <ActionsComponent />
       </PlayerContainer>
     </Player>
   );

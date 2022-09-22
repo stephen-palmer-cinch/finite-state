@@ -12,6 +12,8 @@ const initialContext = {
   selected_pokemon: pikachu,
   available_pokemon: [charmander],
   enemy_pokemon: pidgey,
+  player_dialogue: "What will Pikachu do?",
+  enemy_dialogue: "A wild Pidgey appeared",
 };
 
 export const pokemonBattleMachine = createMachine(
@@ -138,6 +140,7 @@ export const pokemonBattleMachine = createMachine(
         return {
           available_pokemon: [...benchPokemon, currentPokemon],
           selected_pokemon: selectedPokemon,
+          player_dialogue: `Go ${selectedPokemon.name}!`,
         };
       }),
       playerDamage: assign((context, event: any) => {
@@ -146,6 +149,7 @@ export const pokemonBattleMachine = createMachine(
         const currentPokemonHp = currentPokemon.currentHp - selectedMove.damage;
         return {
           selected_pokemon: { ...currentPokemon, currentHp: currentPokemonHp },
+          player_dialogue: `${currentPokemon.name} used ${selectedMove}`,
         };
       }),
       enemyDamage: assign((context, event: any) => {
@@ -154,6 +158,7 @@ export const pokemonBattleMachine = createMachine(
         const enemyPokemonHp = enemyPokemon.currentHp - selectedMove.damage;
         return {
           enemy_pokemon: { ...enemyPokemon, currentHp: enemyPokemonHp },
+          enemy_dialogue: `${enemyPokemon.name} used ${selectedMove}`,
         };
       }),
     },

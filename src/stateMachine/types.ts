@@ -1,3 +1,7 @@
+import pikachuSprite from "../assets/pikachu.png";
+import charmanderSprite from "../assets/charmander.png";
+import pidgeySprite from "../assets/pidgey.png";
+
 export type Move = {
   name: string;
   damage: number;
@@ -8,12 +12,15 @@ export type Pokemon = {
   totalHp: number;
   currentHp: number;
   moves: Move[];
+  sprite: string;
 };
 
 export interface PokemonContext {
   selected_pokemon: Pokemon;
   available_pokemon: Pokemon[];
   enemy_pokemon: Pokemon;
+  player_dialogue: string;
+  enemy_dialogue: string;
 }
 
 export enum Events {
@@ -88,7 +95,9 @@ export const pikachu: Pokemon = {
   moves: [
     { name: "takle", damage: 40 },
     { name: "thunderbolt", damage: 60 },
+    { name: "growl", damage: 0 },
   ],
+  sprite: pikachuSprite,
 };
 
 export const charmander: Pokemon = {
@@ -99,6 +108,7 @@ export const charmander: Pokemon = {
     { name: "takle", damage: 40 },
     { name: "ember", damage: 50 },
   ],
+  sprite: charmanderSprite,
 };
 
 export const pidgey: Pokemon = {
@@ -109,4 +119,5 @@ export const pidgey: Pokemon = {
     { name: "takle", damage: 30 },
     { name: "gust", damage: 40 },
   ],
+  sprite: pidgeySprite,
 };

@@ -1,5 +1,5 @@
 import { SpriteContainer } from "./styled";
 
 export const SpriteComponent = () => {
-  return <SpriteContainer></SpriteContainer>;
+  return <SpriteContainer>Sprite</SpriteContainer>;
 };
