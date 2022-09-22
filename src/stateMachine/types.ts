@@ -21,14 +21,12 @@ export interface PokemonContext {
   available_pokemon: Pokemon[];
   enemy_pokemon: Pokemon;
   player_dialogue: string;
-  enemy_dialogue: string;
 }
 
-export enum Events {
+export enum PokemonEvents {
   your_turn = "YOUR_TURN",
   their_turn = "THEIR_TURN",
   pokemon = "POKEMON",
-  select_next_pokemon = "SELECT_NEXT_POKEMON",
   pokemon_selected = "POKEMON_SELECTED",
   cancel = "CANCEL",
   items = "ITEMS",
@@ -36,13 +34,12 @@ export enum Events {
   move_selected = "MOVE_SELECTED",
   run = "RUN",
   poke_ball = "POKE_BALL",
-  enemy_attack = "ENEMY_ATTACK",
-  damage_taken = "DAMAGE_TAKEN",
   success = "SUCCESS",
   failure = "FAILURE",
 }
 
-export enum State {
+export enum PokemonState {
+  battle = "battle",
   your_turn = "your_turn",
   their_turn = "their_turn",
   moves = "moves",
@@ -58,45 +55,37 @@ export enum State {
 }
 
 export interface SelectedPokemonEvent {
-  type: Events.pokemon_selected;
+  type: PokemonEvents.pokemon_selected;
   payload: number;
 }
 
 export interface MoveSelectedEvent {
-  type: Events.move_selected;
-  payload: number;
-}
-
-export interface EnemyAttackEvent {
-  type: Events.enemy_attack;
+  type: PokemonEvents.move_selected;
   payload: number;
 }
 
 export type GameEvents =
-  | { type: Events.your_turn }
-  | { type: Events.their_turn }
-  | { type: Events.pokemon }
-  | { type: Events.select_next_pokemon }
+  | { type: PokemonEvents.your_turn }
+  | { type: PokemonEvents.their_turn }
+  | { type: PokemonEvents.pokemon }
   | SelectedPokemonEvent
-  | { type: Events.cancel }
-  | { type: Events.items }
-  | { type: Events.moves }
+  | { type: PokemonEvents.cancel }
+  | { type: PokemonEvents.items }
+  | { type: PokemonEvents.moves }
   | MoveSelectedEvent
-  | { type: Events.run }
-  | { type: Events.poke_ball }
-  | EnemyAttackEvent
-  | { type: Events.damage_taken }
-  | { type: Events.success }
-  | { type: Events.failure };
+  | { type: PokemonEvents.run }
+  | { type: PokemonEvents.poke_ball }
+  | { type: PokemonEvents.success }
+  | { type: PokemonEvents.failure };
 
 export const pikachu: Pokemon = {
   name: "Pikachu",
   totalHp: 120,
   currentHp: 120,
   moves: [
-    { name: "takle", damage: 40 },
-    { name: "thunderbolt", damage: 60 },
-    { name: "growl", damage: 0 },
+    { name: "Tackle", damage: 40 },
+    { name: "Thunderbolt", damage: 60 },
+    { name: "Growl", damage: 0 },
   ],
   sprite: pikachuSprite,
   level: 5,
@@ -107,8 +96,9 @@ export const charmander: Pokemon = {
   totalHp: 140,
   currentHp: 140,
   moves: [
-    { name: "takle", damage: 40 },
-    { name: "ember", damage: 50 },
+    { name: "Tackle", damage: 40 },
+    { name: "Ember", damage: 50 },
+    { name: "Leer", damage: 0 },
   ],
   sprite: charmanderSprite,
   level: 5,
@@ -119,8 +109,8 @@ export const pidgey: Pokemon = {
   totalHp: 100,
   currentHp: 100,
   moves: [
-    { name: "takle", damage: 30 },
-    { name: "gust", damage: 40 },
+    { name: "Tackle", damage: 30 },
+    { name: "Gust", damage: 40 },
   ],
   sprite: pidgeySprite,
   level: 4,

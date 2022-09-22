@@ -1,30 +1,22 @@
-import { useContext } from "react";
-import { useActor } from "@xstate/react";
 import { Enemy } from "./styled";
-import { GlobalStateContext } from "../../context/globalState";
 import { NameComponent } from "../shared/name/name.component";
 import { SpriteComponent } from "./sprite/sprite.component";
+import { Pokemon } from "../../stateMachine/types";
 
-export const EnemyComponent = () => {
-  const globalServices = useContext(GlobalStateContext);
+type EnemyComponentProps = {
+  enemyPokemon: Pokemon;
+};
 
-  const [
-    {
-      context: { enemy_pokemon },
-    },
-  ] = useActor(globalServices.pokemonMachine);
+export const EnemyComponent = ({ enemyPokemon }: EnemyComponentProps) => {
   return (
     <Enemy>
       <NameComponent
-        name={enemy_pokemon.name}
-        currentHp={enemy_pokemon.currentHp}
-        totalHp={enemy_pokemon.totalHp}
-        level={enemy_pokemon.level}
+        name={enemyPokemon.name}
+        currentHp={enemyPokemon.currentHp}
+        totalHp={enemyPokemon.totalHp}
+        level={enemyPokemon.level}
       />
-      <SpriteComponent
-        sprite={enemy_pokemon.sprite}
-        name={enemy_pokemon.name}
-      />
+      <SpriteComponent sprite={enemyPokemon.sprite} name={enemyPokemon.name} />
     </Enemy>
   );
 };

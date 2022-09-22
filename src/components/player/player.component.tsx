@@ -1,45 +1,50 @@
-import { useContext } from "react";
-import { useActor } from "@xstate/react";
-import { GlobalStateContext } from "../../context/globalState";
 import { ActionsComponent } from "./actions/actions.component";
 import { DialogueComponent } from "./dialogue/dialogue.component";
 import { NameComponent } from "../shared/name/name.component";
 import { SpriteComponent } from "./sprite/sprite.component";
 import { Player, PlayerContainer } from "./styled";
-import { Events } from "../../stateMachine/types";
+import { PokemonEvents, Pokemon } from "../../stateMachine/types";
+import { MovesComponent } from "../moves/moves.component";
 
-export const PlayerComponent = () => {
-  const globalServices = useContext(GlobalStateContext);
+type PlayerComponentProps = {
+  selectedPokemon: Pokemon;
+  playerDialogue: string;
+  send: any;
+  viewingMoves: boolean;
+};
 
-  const [
-    {
-      context: { selected_pokemon, player_dialogue },
-    },
-    send,
-  ] = useActor(globalServices.pokemonMachine);
-
+export const PlayerComponent = ({
+  selectedPokemon,
+  playerDialogue,
+  send,
+  viewingMoves,
+}: PlayerComponentProps) => {
   return (
     <Player>
       <PlayerContainer>
         <SpriteComponent
-          sprite={selected_pokemon.sprite}
-          name={selected_pokemon.name}
+          sprite={selectedPokemon.sprite}
+          name={selectedPokemon.name}
         />
-        <DialogueComponent dialogue={player_dialogue} />
+        <DialogueComponent dialogue={playerDialogue} />
       </PlayerContainer>
       <PlayerContainer>
         <NameComponent
-          name={selected_pokemon.name}
-          currentHp={selected_pokemon.currentHp}
-          totalHp={selected_pokemon.totalHp}
-          level={selected_pokemon.level}
+          name={selectedPokemon.name}
+          currentHp={selectedPokemon.currentHp}
+          totalHp={selectedPokemon.totalHp}
+          level={selectedPokemon.level}
         />
-        <ActionsComponent
-          movesAction={() => send(Events.moves)}
-          itemsAction={() => send(Events.items)}
-          pokemonAction={() => send(Events.pokemon)}
-          runAction={() => send(Events.run)}
-        />
+        {viewingMoves ? (
+          <MovesComponent moves={selectedPokemon.moves} />
+        ) : (
+          <ActionsComponent
+            movesAction={() => send(PokemonEvents.moves)}
+            itemsAction={() => send(PokemonEvents.items)}
+            pokemonAction={() => send(PokemonEvents.pokemon)}
+            runAction={() => send(PokemonEvents.run)}
+          />
+        )}
       </PlayerContainer>
     </Player>
   );

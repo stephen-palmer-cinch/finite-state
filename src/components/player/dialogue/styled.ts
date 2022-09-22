@@ -5,6 +5,6 @@ export const DialogueContainer = styled.div`
   align-items: center;
   font-size: 20px;
   text-align: center;
-  width: 100%;
+  width: 80%;
   height: 50%;
 `;

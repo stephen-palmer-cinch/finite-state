@@ -19,4 +19,3 @@ function App() {
 }
 
 export default App;
-// testService.send({type: 'LOGIN', id: 'test' });

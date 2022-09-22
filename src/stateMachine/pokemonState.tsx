@@ -41,18 +41,16 @@ export const pokemonBattleMachine = createMachine(
         },
       },
       their_turn: {
-        on: {
-          ENEMY_ATTACK: {
-            target: "player_damage_step",
-            actions: "playerDamage",
-          },
+        after: {
+          1000: { actions: "enemyDamagesPlayer", target: "player_damage_step" },
         },
       },
       moves: {
         on: {
           MOVE_SELECTED: {
             target: "enemy_damage_step",
-            actions: "enemyDamage",
+            actions: "playerDamagesEnemy",
+            internal: true,
           },
           CANCEL: { target: "your_turn" },
         },
@@ -87,43 +85,47 @@ export const pokemonBattleMachine = createMachine(
         },
       },
       enemy_damage_step: {
-        on: {
-          DAMAGE_TAKEN: [
+        after: {
+          1000: [
             {
               target: "victory",
               cond: (context) => context.enemy_pokemon.currentHp < 1,
+              internal: true,
             },
             {
               target: "their_turn",
+              internal: true,
             },
           ],
         },
       },
       player_damage_step: {
-        on: {
-          DAMAGE_TAKEN: [
+        after: {
+          1000: [
             {
               target: "feint",
               cond: (context) => context.selected_pokemon.currentHp < 1,
             },
             {
+              actions: "playerMessage",
               target: "your_turn",
             },
           ],
         },
       },
       feint: {
-        on: {
-          SELECT_NEXT_POKEMON: [
-            {
-              target: "whited_out",
-              cond: (context) => context.available_pokemon.length < 1,
-            },
-            {
-              target: "pokemon",
-            },
-          ],
-        },
+        always: [
+          {
+            target: "whited_out",
+            cond: (context) =>
+              context.available_pokemon.every(
+                (pokemon) => pokemon.currentHp < 1
+              ),
+          },
+          {
+            target: "pokemon",
+          },
+        ],
       },
       victory: { type: "final" },
       whited_out: { type: "final" },
@@ -143,22 +145,40 @@ export const pokemonBattleMachine = createMachine(
           player_dialogue: `Go ${selectedPokemon.name}!`,
         };
       }),
-      playerDamage: assign((context, event: any) => {
+      playerDamagesEnemy: assign((context, event: any) => {
         const currentPokemon: Pokemon = context.selected_pokemon;
-        const selectedMove = currentPokemon.moves[event.payload];
-        const currentPokemonHp = currentPokemon.currentHp - selectedMove.damage;
-        return {
-          selected_pokemon: { ...currentPokemon, currentHp: currentPokemonHp },
-          player_dialogue: `${currentPokemon.name} used ${selectedMove}`,
-        };
-      }),
-      enemyDamage: assign((context, event: any) => {
         const enemyPokemon: Pokemon = context.enemy_pokemon;
-        const selectedMove = enemyPokemon.moves[event.payload];
-        const enemyPokemonHp = enemyPokemon.currentHp - selectedMove.damage;
+        const selectedMove = currentPokemon.moves[event.payload];
+        let enemyPokemonHp = enemyPokemon.currentHp - selectedMove.damage;
+        if (enemyPokemonHp < 0) enemyPokemonHp = 0;
         return {
           enemy_pokemon: { ...enemyPokemon, currentHp: enemyPokemonHp },
-          enemy_dialogue: `${enemyPokemon.name} used ${selectedMove}`,
+          player_dialogue: `${currentPokemon.name} used ${selectedMove.name}`,
+        };
+      }),
+      enemyDamagesPlayer: assign((context) => {
+        const currentPokemon: Pokemon = context.selected_pokemon;
+        const enemyPokemon: Pokemon = context.enemy_pokemon;
+        const selectedMovePosition = Math.floor(
+          Math.random() * enemyPokemon.moves.length
+        );
+        const selectedMove = enemyPokemon.moves[selectedMovePosition];
+        let currentPokemonHp = currentPokemon.currentHp - selectedMove.damage;
+        if (currentPokemonHp < 0) currentPokemonHp = 0;
+        return {
+          selected_pokemon: { ...currentPokemon, currentHp: currentPokemonHp },
+          player_dialogue: `${enemyPokemon.name} used ${selectedMove.name}`,
+        };
+      }),
+      playerMessage: assign((context) => {
+        const currentPokemon: Pokemon = context.selected_pokemon;
+        const currentPokemonHp = currentPokemon.currentHp;
+        const message =
+          currentPokemonHp < 1
+            ? `${currentPokemon.name} fainted?`
+            : `What should ${currentPokemon.name} do?`;
+        return {
+          player_dialogue: message,
         };
       }),
     },

@@ -6,7 +6,7 @@ type DialogueComponentProps = {
 export const DialogueComponent = ({ dialogue }: DialogueComponentProps) => {
   return (
     <DialogueContainer>
-      <div>{dialogue}</div>
+      <h4>{dialogue}</h4>
     </DialogueContainer>
   );
 };
