@@ -13,7 +13,6 @@ const initialContext = {
   available_pokemon: [charmander],
   enemy_pokemon: pidgey,
   player_dialogue: "What will Pikachu do?",
-  enemy_dialogue: "A wild Pidgey appeared",
 };
 
 export const pokemonBattleMachine = createMachine(
@@ -50,7 +49,6 @@ export const pokemonBattleMachine = createMachine(
           MOVE_SELECTED: {
             target: "enemy_damage_step",
             actions: "playerDamagesEnemy",
-            internal: true,
           },
           CANCEL: { target: "your_turn" },
         },
@@ -90,11 +88,9 @@ export const pokemonBattleMachine = createMachine(
             {
               target: "victory",
               cond: (context) => context.enemy_pokemon.currentHp < 1,
-              internal: true,
             },
             {
               target: "their_turn",
-              internal: true,
             },
           ],
         },
@@ -103,8 +99,8 @@ export const pokemonBattleMachine = createMachine(
         after: {
           1000: [
             {
-              target: "feint",
               cond: (context) => context.selected_pokemon.currentHp < 1,
+              target: "feint",
             },
             {
               actions: "playerMessage",
@@ -116,11 +112,11 @@ export const pokemonBattleMachine = createMachine(
       feint: {
         always: [
           {
-            target: "whited_out",
             cond: (context) =>
               context.available_pokemon.every(
                 (pokemon) => pokemon.currentHp < 1
               ),
+            target: "whited_out",
           },
           {
             target: "pokemon",
