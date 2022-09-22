@@ -2,6 +2,7 @@ import styled from "styled-components";
 import background from "../../assets/background.png";
 
 export const Stage = styled.div`
+  margin: auto;
   height: 500px;
   width: 800px;
   background-image: url(${background});
