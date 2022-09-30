@@ -1,17 +1,22 @@
-import { useActor } from "@xstate/react";
+import { useActor, useMachine } from "@xstate/react";
 import { useContext, useEffect } from "react";
 import { GlobalStateContext } from "../context/globalState";
+import { somethingMachine } from "../stateMachine/sometehingState";
 import { PokemonEvents } from "../stateMachine/types";
 
 export const SomeComponent = () => {
-  const globalServices = useContext(GlobalStateContext);
+  // const globalServices = useContext(GlobalStateContext);
+  const [current] = useMachine(somethingMachine);
+  // const [{ value }, send] = useActor(globalServices.pokemonMachine);
 
-  const [{ value }, send] = useActor(globalServices.pokemonMachine);
+  useEffect(() => {
+    console.log(current);
+  }, [current]);
 
   return (
     <>
       <div>
-        <button onClick={() => send(PokemonEvents.your_turn)}>Your turn</button>
+        {/* <button onClick={() => send(PokemonEvents.your_turn)}>Your turn</button>
         <button onClick={() => send(PokemonEvents.pokemon)}>Pokemon</button>
         <button
           onClick={() =>
@@ -34,9 +39,9 @@ export const SomeComponent = () => {
         <button onClick={() => send(PokemonEvents.poke_ball)}>Pokeball</button>
         <button onClick={() => send(PokemonEvents.success)}>Success</button>
         <button onClick={() => send(PokemonEvents.failure)}>Failure</button>
-        <button onClick={() => send(PokemonEvents.cancel)}>Cancel</button>
+        <button onClick={() => send(PokemonEvents.cancel)}>Cancel</button> */}
       </div>
-      <div style={{ color: "white" }}>{value.toString()}</div>
+      {/* <div style={{ color: "white" }}>{value.toString()}</div> */}
     </>
   );
 };

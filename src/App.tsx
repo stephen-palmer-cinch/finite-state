@@ -7,12 +7,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <GlobalStateProvider>
-          <div>
-            <SomeComponent />
-            <StageComponent />
+        {/* <GlobalStateProvider>
+          <div> */}
+        <SomeComponent />
+        {/* <StageComponent />
           </div>
-        </GlobalStateProvider>
+        </GlobalStateProvider> */}
       </header>
     </div>
   );

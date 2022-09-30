@@ -1,4 +1,5 @@
 import { assign, createMachine } from "xstate";
+import { send, sendParent } from "xstate/lib/actions";
 import {
   PokemonContext,
   GameEvents,
@@ -8,7 +9,7 @@ import {
   Pokemon,
 } from "./types";
 
-const initialContext = {
+export const initialContext = {
   selected_pokemon: pikachu,
   available_pokemon: [charmander],
   enemy_pokemon: pidgey,
@@ -27,6 +28,10 @@ export const pokemonBattleMachine = createMachine(
     context: initialContext,
     states: {
       battle: {
+        entry: sendParent((context: PokemonContext) => ({
+          type: "POKEMON",
+          payload: context.selected_pokemon.name,
+        })),
         after: {
           1000: { target: "your_turn" },
         },
